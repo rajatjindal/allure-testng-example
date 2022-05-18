@@ -1,0 +1,23 @@
+version: 2.0
+
+jobs:
+  test:
+    docker:
+      - image: cimg/openjdk:17.0.1
+      - image: selenium/standalone-firefox:4.1.4
+        name: selenium
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ./target
+      - run: ./mvnw test
+      - run: ./mvnw io.qameta.allure:allure-maven:report
+      - store_artifacts:
+          path: target/site/allure-maven-plugin/
+          destination: allure-report
+workflows:
+  version: 2
+
+  build-then-test:
+    jobs:
+      - test
